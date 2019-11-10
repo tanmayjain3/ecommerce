@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const crpto = requires("crypto");
+const crpto = require("crypto");
 const uuidv1 = require("uuid/v1");
 
 
@@ -12,9 +12,9 @@ const userSchema = new mongoose.Schema({
     },
     email:{
         type:String,
+        unique:true,
         trim:true,
         required:true,
-        unique:32
     },
     hashed_password:{
         type:String,
@@ -37,12 +37,12 @@ const userSchema = new mongoose.Schema({
 
 // virtual field
 
-userSchema.virtual("password").set((password)=>{
+userSchema.virtual("password").set(function (password){
     this._password = password;
     this.salt = uuidv1();
     this.hashed_password = this.encryptPassword(password);
 })
-.get(()=>{
+.get(function (){
     return this._password;
 })
 
