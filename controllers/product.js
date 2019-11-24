@@ -140,7 +140,85 @@ exports.list = (req,res) =>{
                 })
             }
 
-            res.send(data)
+            res.json(data)
         })
 
+}
+
+exports.listRelated = (req,res) =>{
+    let limit = req.query.limit ? parseInt(req.query.limit) : 6;
+    Product.find({_id:{$ne:req.product},category:req.product.library})
+    .limit(limit)
+    .populate("category", "_id name")
+    .exec((err, products)=>{
+        if(err){
+            return res.status(400).json({
+                error:"Products not found"
+            })
+        }
+
+        res.json(products);
+    })
+}
+
+exports.listCategories = (req,res) =>{
+    Product.distinct("category",{},(err,categories)=>{
+        if(err){
+            return res.status(400).json({
+                error:"Categories not found"
+            })
+        }
+
+        res.json(categories);
+    })
+}
+
+exports.listBySearch = (req,res) =>{
+    let order = req.query.order ? req.query.order : "desc";
+    let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
+    let limit = req.query.limit ? parseInt(req.query.limit) : 100;
+    let skip = parseInt(req.body.skip);
+    let findArgs = {};
+
+    for(let key in req.body.filters){
+        if(req.body.filters[key].length>0){
+            if(key=="price"){
+                findArgs[key] = {
+                    $gte : req.body.filters[key][0],
+                    $lte : req.body.filters[key][1]
+                }
+            } else{
+                findArgs[key] = req.body.filters[key]
+            }
+        }
+    }
+
+    Product.find(findArgs)
+    .select("-photo")
+    .populate("category")
+    .sort([[sortBy,order]])
+    .skip(skip)
+    .limit(6)
+    .exec((err,data)=>{
+        if(err){
+            return res.status(400).json({
+                error:err
+            })
+        }
+
+        res.json({
+            size:data.length,
+            data
+        })
+    })
+}
+
+exports.photo = (req,res, next)=>{
+    console.log("Tanmay")
+    if(req.product.photo.data){
+        res.set("Content-Type", req.product.photo.contentType)
+        return res.send(req.product.photo.data)
+    }
+
+    next();
 }

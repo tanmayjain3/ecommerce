@@ -6,9 +6,9 @@ const uniqueMessage =  error =>{
         let fieldName = error.message.substring(
             error.message.lastIndeOf(".$") +2,error.message.lastIndexof("_1"));
 
-            output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + "already exists";
+            return output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + "already exists";
     } catch(ex){
-        output = "Unique field already exists";
+        return output = "Unique field already exists";
     }
 }
 
@@ -32,6 +32,5 @@ exports.errorHandler = error =>{
             }
         }
     }
-
     return message;
 }
