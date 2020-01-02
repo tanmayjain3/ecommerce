@@ -11,8 +11,18 @@ const userRoutes = require("./routes/user");
 const categoryRoutes = require("./routes/category");
 const productRoutes = require("./routes/product");
 const app = express();
+const uri = "mongodb+srv://tanmayjain:tanmay@19@cluster0-5djwb.mongodb.net/test"
 
-mongoose.connect(process.env.DATABASE,{
+// mongoose.connect(process.env.DATABASE,{
+//         useNewUrlParser:true,
+//         useCreateIndex:true,
+//         useUnifiedTopology:true
+    
+// }).then(()=>
+//         console.log("DB connected")
+//     ).catch((error)=>console.log(error))
+
+mongoose.connect(uri,{
         useNewUrlParser:true,
         useCreateIndex:true,
         useUnifiedTopology:true
